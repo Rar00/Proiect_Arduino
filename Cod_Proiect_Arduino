@@ -1,0 +1,113 @@
+#define USE_ARDUINO_INTERRUPTS true    // Set-up low-level interrupts for most acurate BPM math.
+#include <PulseSensorPlayground.h> // check https://github.com/WorldFamousElectronics/PulseSensorPlayground
+
+#include <SoftwareSerial_Class.h> //Import this from https://github.com/MakersTeam/Galileo/tree/master/Arduino-Examples/SoftwareSerial
+#include <LiquidCrystal.h>
+
+
+////////////////////////////////
+//Create software serial object to communicate with A6
+//To change the numbers below!!!!!!!!!!!!!!!!!!!!!!!!
+SoftwareSerial mySerial(3, 2); //A6 Tx & Rx is connected to Arduino #3 & #2
+
+
+
+
+//////////////////////////
+// initialize the library by associating any needed LCD interface pin
+// with the arduino pin number it is connected to
+
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+
+
+
+//////////////////////////////////////
+//  Variables
+const int PulseWire = 0;       // PulseSensor PURPLE WIRE connected to ANALOG PIN 0
+//const int LED = LED_BULITIN;          // The on-board Arduino LED, close to PIN 13.
+int Threshold = 550;           // Determine which Signal to "count as a beat" and which to ignore.
+                               // Use the "Gettting Started Project" to fine-tune Threshold Value beyond default setting.
+                               // Otherwise leave the default "550" value. 
+                               
+PulseSensorPlayground pulseSensor;  // Creates an instance of the PulseSensorPlayground object called "pulseSensor"
+////////////////////////////////////////////
+
+
+
+
+void setup()
+{
+    // set up the LCD's number of columns and rows:
+
+  lcd.begin(16, 2);
+
+  // Print a message to the LCD.
+
+  lcd.print("hello, world!");
+
+  //Begin serial communication with Arduino and Arduino IDE (Serial Monitor)
+  Serial.begin(9600);
+  
+  //Begin serial communication with Arduino and A6
+  mySerial.begin(9600);
+
+  Serial.println("Initializing..."); 
+  delay(1000);
+
+  // Configure the PulseSensor object, by assigning our variables to it. 
+  pulseSensor.analogInput(PulseWire);   
+  //pulseSensor.blinkOnPulse(LED);       //auto-magically blink Arduino's LED with heartbeat.
+  pulseSensor.setThreshold(Threshold);   
+
+  // Double-check the "pulseSensor" object was created and "began" seeing a signal. 
+   if (pulseSensor.begin()) {
+    Serial.println("We created a pulseSensor Object !");  //This prints one time at Arduino power-up,  or on Arduino reset.  
+  }
+
+  mySerial.println("AT"); //Once the handshake test is successful, i t will back to OK
+  updateSerial();
+  
+  mySerial.println("ATD+ZZxxxxxxxxxx"); //  change ZZ with country code and xxxxxxxxxxx with phone number to dial
+  updateSerial();
+  delay(20000); // wait for 20 seconds...
+  mySerial.println("ATH"); //hang up
+  updateSerial();
+}
+
+void loop()
+{
+    // set the cursor to column 0, line 1
+
+  // (note: line 1 is the second row, since counting begins with 0):
+
+  lcd.setCursor(0, 1);
+
+  updateSerial();
+  
+
+  delay(20);                    // considered best practice in a simple sketch.
+
+}
+
+void updateSerial()
+{
+  if (pulseSensor.sawStartOfBeat()) {            // Constantly test to see if "a beat happened".
+  int myBPM = pulseSensor.getBeatsPerMinute();  // Calls function on our pulseSensor object that returns BPM as an "int".
+                                               // "myBPM" hold this BPM value now. 
+  Serial.println("♥  A HeartBeat Happened ! "); // If test is "true", print a message "a heartbeat happened".
+  Serial.print("BPM: ");                        // Print phrase "BPM: " 
+  Serial.println(myBPM);                        // Print the value inside of myBPM. 
+}
+  delay(500);
+  while (Serial.available()) 
+  {
+    mySerial.write(Serial.read());//Forward what Serial received to Software Serial Port
+  }
+  while(mySerial.available()) 
+  {
+    Serial.write(mySerial.read());//Forward what Software Serial received to Serial Port
+  }
+}
