@@ -21,7 +21,7 @@ void setup()
   updateSerial();
   mySerial.println("AT+CREG?"); //Check whether it has registered in the network
   updateSerial();
-  mySerial.println("ATD+ZZxxxxxxxxxx"); //  change ZZ with country code and xxxxxxxxxxx with phone number to dial
+  mySerial.println("ATD+40729364858"); //  change ZZ with country code and xxxxxxxxxxx with phone number to dial
   updateSerial();
   delay(20000); // wait for 20 seconds...
   mySerial.println("ATH"); //hang up
