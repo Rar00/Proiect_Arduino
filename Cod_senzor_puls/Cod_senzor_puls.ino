@@ -8,7 +8,7 @@ const int PulseWire = 0;       // PulseSensor PURPLE WIRE connected to ANALOG PI
 
 const int pinInput = A0;
 const int pinOut= 2;
-const int tension=420;
+const int tension=500;
 int nrbatai=0;
 bool val=false;
 int data=0;
@@ -28,7 +28,7 @@ void loop() {
   // put your main code here, to run repeatedly:
   lcd.setCursor(0, 0);   
   data=analogRead(pinInput); // data ia valoarea(intre 0 si 500 cred) de la A0
-  Serial.println(data);
+  //Serial.println(data);
   SendPulse(data);
   
 }
@@ -46,10 +46,10 @@ void SendPulse(int data){
     val=true;
     nrbatai++;
   }
-  if(nrtimp-timpAnt>=10000){//se verifica daca a trecut 1 secunda(trebuie sa punem pt 60 secunde cand nu testam)
+  if(nrtimp-timpAnt>=5000){//se verifica daca a trecut 1 secunda(trebuie sa punem pt 60 secunde cand nu testam)
     //calc nr batai=nrbatai/nr secunde
-    lcd.println((float)(nrbatai)/10);
-    Serial.println((float)(nrbatai)/10);
+    lcd.println((float)(nrbatai)/5);
+    Serial.println((float)(nrbatai)/5);
     timpAnt=nrtimp;
     nrbatai=0;
   }
