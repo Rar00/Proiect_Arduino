@@ -28,7 +28,7 @@ void setup() {
     pinMode(A0,INPUT);
     digitalWrite(7,HIGH);//led albastru
     digitalWrite(8,LOW);//led rosu
-    Serial.begin(115200);//baud rate este de 115200
+    Serial.begin(9600);//baud rate este de 115200
     pinMode(pinOut,OUTPUT);//Folosim pinul A2 pentru a transmite la Uno inceperea transmiterii mesajului prin GSM 
 }
 
@@ -66,19 +66,16 @@ void SendPulse(int data){
   if(tension>data && val==true && data>514){
     val=false;
     nrbatai++;
-    //Serial.println(nrbatai);
-    //Serial.println(nrtimp);
   }
   if((tension<=data && val==false)){
     val=true;
-//    nrbatai++;
   }
   if(nrtimp-timpAnt>=5000){//se verifica daca a trecut 1 secunda(senzorul aproximeaza automat 60 batai intr-o secunda)
     //calc nr batai=(nrbatai/2.9) am calibrat folosind un ceas inteligent
     // eroare maxima de 11%
     
     lcd.print((float)(nrbatai)*12);
-    //Serial.println((float)(nrbatai)*12);
+    
     lcd.setCursor(0,1);
     contorTimp++;
     lcd.print("t="); 
@@ -87,14 +84,15 @@ void SendPulse(int data){
     lcd.setCursor(13,1);
     lcd.print("->");
     lcd.setCursor(15,1);
+    
     if((nrbatai*12)>150 || (nrbatai*12)<40){
       possibleDanger++;
       lcd.print(possibleDanger);
       }
      else{
       possibleDanger = 0;
+      lcd.print(possibleDanger);
       }
-      
     if(possibleDanger==3){
       delay(1500);
       possibleDanger = 0;
