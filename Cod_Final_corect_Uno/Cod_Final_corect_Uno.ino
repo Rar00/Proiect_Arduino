@@ -41,7 +41,7 @@ void setup()
   mySerial.println("AT+CMGF=1"); // Configuring TEXT mode
   updateSerial();
   delay(1000);
-  mySerial.println("AT+CMGS=\"+40763892629\"");//change ZZ with country code and xxxxxxxxxxx with phone number to sms
+  mySerial.println("AT+CMGS=\"+40729364858\"");//change ZZ with country code and xxxxxxxxxxx with phone number to sms
   updateSerial();
   delay(1000);
   mySerial.println("Mesaj"); //text content
